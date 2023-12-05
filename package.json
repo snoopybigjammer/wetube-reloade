@@ -12,7 +12,8 @@
     "build:server": "babel src -d build",
     "build:assets": "webpack --mode=production",
     "dev:server": "nodemon",
-    "dev:assets": "webpack --mode=development -w"
+    "dev:assets": "webpack --mode=development -w",
+    "heroku-postbuild": "npm run build"
   },
   "author": "snoopy",
   "license": "ISC",
