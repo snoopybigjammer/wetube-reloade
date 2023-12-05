@@ -1,0 +1,19 @@
+.upload__video {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  video {
+    border-radius: 10px;
+  }
+  button {
+    margin-top: 5px;
+    border-radius: 10px;
+  }
+}
+
+#uploadVideo {
+  text-align: center;
+  background-color: $red;
+}

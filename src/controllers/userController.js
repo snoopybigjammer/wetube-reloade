@@ -1,25 +1,29 @@
 import User from "../models/User";
 import Video from "../models/Video";
+import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
-export const getJoin = (req, res) =>
-  res.render("join", { pageTitle: "join plz" });
+export const getJoin = (req, res) => res.render("join", { pageTitle: "join" });
 export const postJoin = async (req, res) => {
   const { name, username, email, password, password2, location } = req.body;
-  const exists = await User.exists({ $or: [{ username }, { email }] });
 
+  console.log(req.body);
+
+  const pageTitle = "Join";
   // const emailExists = await User.exists({ username, email });
   // or 연산자와 다르게 같은 username & email
 
   if (password !== password2) {
     return res.status(400).render("join", {
-      pageTitle: "Join",
+      pageTitle,
       errorMessage: "password confirmation does not match",
     });
   }
+
+  const exists = await User.exists({ $or: [{ username }, { email }] });
   if (exists) {
     return res.status(400).render("join", {
-      pageTitle: "Join",
+      pageTitle,
       errorMessage: "this username or email has already been taken",
     });
   }
@@ -27,7 +31,6 @@ export const postJoin = async (req, res) => {
   try {
     await User.create({
       name,
-      avatarUrl,
       username,
       email,
       password,
@@ -197,12 +200,14 @@ export const see = async (req, res) => {
   });
 };
 export const logout = (req, res) => {
+  req.flash("info", "bye bye");
   req.session.destroy();
   return res.redirect("/");
 };
 
 export const getChangePassword = (req, res) => {
   if (req.session.user.socialOnly === true) {
+    req.flash("error", "you can't!");
     return res.redirect("/");
   }
   return res.render("users/change-password", { pageTitle: "change password" });
@@ -231,8 +236,8 @@ export const postChangePassword = async (req, res) => {
 
   const user = await User.findById(_id);
   user.password = newPassword;
-  req.session.user.password = user.password;
   await user.save();
+  req.flash("info", "password updated");
 
   return res.redirect("/users/logout");
 };
